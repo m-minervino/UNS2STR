@@ -10,7 +10,7 @@ From the command line, it is executed by typing:
 
 where the first input argument (after executable name) is the original structured grid file, which is used to provide indexing for all grid nodes. It must be provided as a Tecplot binary load-on-demand file (*.szplt*), containing at x,y,z coordinates of the 2D mesh, lying on the xz plane (i.e. y coordinates are identically zero, but need to be included in the file).
 
-The second argument is the unstructured CFD solution, obtained on that grid once converted to the solver format (unordered). It must also be provided as a Tecplot binary load-on-demand file (*.szplt*), containing coordinates of the unstructured 2D mesh, lying on the xz plane (i.e. y coordinates are identically zero) as well as all the other flor variables stored at grid nodes.
+The second argument is the unstructured CFD solution, obtained on that grid once converted to the solver format (unordered). It must also be provided as a Tecplot binary load-on-demand file (*.szplt*), containing coordinates of the unstructured 2D mesh, lying on the xz plane (i.e. y coordinates are identically zero) as well as all the other flow variables stored at grid nodes.
 
 The third input is a flag (0/1) specifying the minimm (0) or maximum (1) vebosity level.
 
