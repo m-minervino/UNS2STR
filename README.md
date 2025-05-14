@@ -18,6 +18,19 @@ The fourth argument is an optional scaling factor, using during nodes coordinate
 
 **UNS2STR** provides as an output the CFD solution converted into structured (ordered) Tecplot format (default name is "*SU2.szplt*", as well as a topological file (*TOPO.szplt*) which contains the input structured grid along with an additional SU2_NODE-ID variable which stores, for each grid point of the ordered mesh, the corresponding node index of the unstructured dataset included in the input CFD solution. This allows mapping information to be used for different CFD solutions obtained on the same grid (e.g. for flow-field obtained at different time steps, in moving grid problems), with no need to re-compute nodes association.
 
+You can use the following *BibTeX* citation as a reference (p. 318) for the **UNS2STR** tool:
+
+@PhdThesis{MinervinoPhD,
+  author   = {Minervino, Mauro},
+  school   = {University of Naples Federico II},
+  title    = {{A unified thermodynamic/vortical theory for the aerodynamic force analysis}},
+  year     = {2025},
+  month    = feb,
+  type     = {phdthesis},
+  doi      = {http://dx.doi.org/10.13140/RG.2.2.20705.83047},
+  url      = {https://hdl.handle.net/11588/989058},
+}
+
 <ins>Contacts</ins>:
 ***Dr. Mauro Minervino***
 *Established Researcher at the Italian Aerospace Research Centre (C.I.R.A. SCpA)*
