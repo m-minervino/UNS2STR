@@ -2,9 +2,9 @@
 
 EXE = UNS2STR
 SRC = UNS2STR.cpp
-CC = icc
+CC = icpx
 CFLAGS = -std=c++11
-TECIOLIBS = /usr/local/apps/tecplot2022r1/360ex_2022r1/bin/libtecio.so
+TECIOLIBS = /opt/tecplot/360ex_2025r2/bin/libtecio.so
 
 default_target: $(EXE)
 

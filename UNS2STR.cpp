@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 //Required by TecIO
-#include "/usr/local/apps/tecplot2022r1/360ex_2022r1/include/TECIO.h"
+#include "/opt/tecplot/360ex_2025r2/include/TECIO.h"
 #include <cstring>
 #include <iostream>
 #include <limits>
@@ -102,14 +102,8 @@ int main(int argc, char** argv) {
     }
     int32_t numVars = 0;
     R = tecDataSetGetNumVars(inputFileHandle, &numVars);
-    int64_t numValues[numVars];
-        for (int j = 0; j < numVars; j++) {
-            numValues[j] = 0;
-        }
-    string in_var_names[numVars];
-        for (int i = 0; i < numVars; i++) { //Initialization loop
-            in_var_names[i] = "";
-        }
+    vector < int64_t > numValues(numVars,0);
+    vector < string > in_var_names(numVars,"");
     for (int j = 0; j < numVars; j++) {
         char* name = NULL;
         R = tecVarGetName(inputFileHandle, j + 1, &name);
@@ -128,26 +122,14 @@ int main(int argc, char** argv) {
         }
         cout << "Maximum number of variable values is:   " << max_nv << "\n";
     }
-	double values[numVars][max_nv];
-        for (int j = 0; j < numVars; j++) {
-            for (int k = 0; k < max_nv; k++) {
-                values[j][k] = 0;
-            }
-        }
+    vector < vector < double > > values(numVars,vector < double > (max_nv,0));
     for (int j = 0; j < numVars; j++) {
         R = tecZoneVarGetDoubleValues(inputFileHandle, 1, j + 1, 1, numValues[j], &values[j][0]);
     }
     R = tecFileReaderClose(&inputFileHandle);
 
     //Reshape data based on a i-k-var 3D matrix
-    double STR_values[iMax][kMax][4];
-        for (int i = 0; i < iMax; i++) {   //Initialization loop
-            for (int j = 0; j < kMax; j++) {
-                for (int k = 0; k < 4; k++) {
-                    STR_values[i][j][k] = 0;
-                }
-            }
-        }
+    vector < vector < vector < double > > > STR_values(iMax, vector < vector < double > > (kMax, vector < double > (4,0)));
     for (int j = 0; j < numVars; j++) {
         for (int k = 0; k < kMax; k++) {
             for (int m = 0; m < iMax; m++) {
@@ -171,14 +153,8 @@ int main(int argc, char** argv) {
 	R = tecFileReaderOpen((char const*)(argv[2]), &inputFileHandle);
     int32_t numVars_SU2 = 0;
     R = tecDataSetGetNumVars(inputFileHandle, &numVars_SU2);
-    int64_t numValues_SU2[numVars_SU2];
-        for (int j = 0; j < numVars_SU2; j++) {
-            numValues_SU2[j] = 0;
-        }
-    string in_var_names_SU2[numVars_SU2];
-        for (int i = 0; i < numVars_SU2; i++) { //Initialization loop
-            in_var_names_SU2[i] = "";
-        }
+    vector < int64_t > numValues_SU2(numVars_SU2,0);
+    vector < string > in_var_names_SU2(numVars_SU2,"");
     for (int j = 0; j < numVars_SU2; j++) {
         char* name = NULL;
         R = tecVarGetName(inputFileHandle, j + 1, &name);
@@ -197,12 +173,7 @@ int main(int argc, char** argv) {
         }
         cout << "Maximum number of SU2 variable values is:   " << max_nv_SU2 << "\n";
     }
-    double values_SU2[numVars_SU2][max_nv_SU2];
-        for (int j = 0; j < numVars_SU2; j++) {
-            for (int k = 0; k < max_nv_SU2; k++) {
-                values_SU2[j][k] = NAN;
-            }
-        }
+    vector < vector < double > > values_SU2(numVars_SU2,vector < double > (max_nv_SU2,NAN));
     for (int j = 0; j < numVars_SU2; j++) {
         R = tecZoneVarGetDoubleValues(inputFileHandle, 1, j + 1, 1, numValues_SU2[j], &values_SU2[j][0]);
     }
@@ -211,14 +182,7 @@ int main(int argc, char** argv) {
     R = tecFileReaderClose(&inputFileHandle);
 
 	//Fill-in new array of ordered unstructured data
-	double ORD_values[iMax][kMax][numVars_SU2];
-        for (int i = 0; i < iMax; i++) {   //Initialization loop
-            for (int j = 0; j < kMax; j++) {
-                for (int k = 0; k < numVars_SU2; k++) {
-                    ORD_values[i][j][k] = NAN;
-                }
-            }
-        }
+    vector < vector < vector < double > > > ORD_values(iMax, vector < vector < double > > (kMax, vector < double > (numVars_SU2,NAN)));
 	int rho_id=-1;
 	for (int j = 0; j < numVars_SU2; j++) {
 		if (in_var_names_SU2[j]=="Density") {
@@ -273,12 +237,7 @@ int main(int argc, char** argv) {
 		}
 	}
     //SU2 output data structure
-	double values_SU2_NEW[numVars_SU2][iMax*kMax];
-        for (int j = 0; j < numVars_SU2; j++) {
-            for (int k = 0; k < iMax*kMax; k++) {
-                values_SU2_NEW[j][k] = 0;
-            }
-        }
+    vector < vector < double > > values_SU2_NEW(numVars_SU2,vector < double > (iMax*kMax,0));
 	for (int j = 0; j < numVars_SU2; j++) {
 		for (int k = 0; k < kMax; k++) {
     	    for (int m = 0; m < iMax; m++) {
@@ -298,22 +257,10 @@ int main(int argc, char** argv) {
 			}
         }
 	int32_t fileFormat = 1; // .szplt
-	int32_t varTypes[numVars_SU2];
-	for (int i=0; i<numVars_SU2; i++) {
-		varTypes[i]=2;
-	}
-	int32_t shareVarFromZone[numVars_SU2];
-    for (int i=0; i<numVars_SU2; i++) {
-        shareVarFromZone[i]=0;
-    }
-	int32_t valueLocation[numVars_SU2];
-    for (int i=0; i<numVars_SU2; i++) {
-        valueLocation[i]=1;
-    }
-	int32_t passiveVarList[numVars_SU2];
-    for (int i=0; i<numVars_SU2; i++) {
-        passiveVarList[i]=0;
-    }
+    vector < int32_t > varTypes(numVars_SU2,2);
+    vector < int32_t > shareVarFromZone(numVars_SU2,0);
+	vector < int32_t > valueLocation(numVars_SU2,1);
+	vector < int32_t > passiveVarList(numVars_SU2,0);
 	int32_t shareConnectivityFromZone=0;
 	int64_t numFaceConnections=0;
 	int32_t faceNeighborMode=0;
@@ -332,12 +279,7 @@ int main(int argc, char** argv) {
     //Conditionally write-out input structured grid with topologycal information included
     if (numVars==3) {
         //Output data structure
-        double values_NEW[4][iMax*kMax];
-            for (int j = 0; j < 4; j++) {
-                for (int k = 0; k < iMax*kMax; k++) {
-                    values_NEW[j][k] = 0;
-                }
-            }
+        vector < vector < double > > values_NEW(4,vector < double > (iMax*kMax,0));
         for (int j = 0; j < 3; j++) {
             for (int k = 0; k < kMax; k++) {
                 for (int m = 0; m < iMax; m++) {
